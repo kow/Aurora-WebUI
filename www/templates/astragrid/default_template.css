@@ -738,3 +738,24 @@ td.gridbox_br {
 {
 	display:none; 
 }
+
+div#ContentHeaderLeft {
+display: none;
+margin: 10px;
+float: center;
+background-color: transparent;
+}
+
+div#ContentHeaderCenter {
+display: none;
+margin: 0px;
+width: 0px;
+background-color: transparent;
+float: left;
+font-weight: bold;
+margin-top:25px;
+}
+
+div#ContentHeaderRight {
+background-color: transparent;
+}
