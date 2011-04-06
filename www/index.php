@@ -75,8 +75,50 @@ if ($_POST[Submit] == $webui_admin_login) {
 }
 //LOGIN END
 
+$DbLink = new DB;
 
+$DbLink->query("SELECT gridstatus,active,color,title,message  FROM ".C_INFOWINDOW_TBL." ");
+list($GRIDSTATUS,$INFOBOX,$BOXCOLOR,$BOX_TITLE,$BOX_INFOTEXT) = $DbLink->next_record();
 
+$found = array();
+$found[0] = json_encode(array('Method' => 'OnlineStatus', 'WebPassword' => md5(WIREDUX_PASSWORD)));
+$do_post_request = do_post_request($found);
+$recieved = json_decode($do_post_request);
+$GRIDSTATUS = $recieved->{'Online'};
+
+// Doing it the same as the Who's Online now part
+$DbLink = new DB;
+$DbLink->query("SELECT UserID FROM " . C_USERINFO_TBL . " where IsOnline = 1 AND " .
+        "LastLogin < (UNIX_TIMESTAMP(FROM_UNIXTIME(UNIX_TIMESTAMP(now())))) AND " .
+        "LastLogout < (UNIX_TIMESTAMP(FROM_UNIXTIME(UNIX_TIMESTAMP(now())))) " .
+        "ORDER BY LastLogin DESC");
+$NOWONLINE = 0;
+while (list($UUID) = $DbLink->next_record()) {
+    // Let's get the user info
+    $DbLink2 = new DB;
+    $DbLink2->query("SELECT Firstname, Lastname from " . C_USERS_TBL . " where PrincipalID = '" . $UUID . "'");
+    list($firstname, $lastname) = $DbLink2->next_record();
+    $DbLink3 = new DB;
+    $DbLink3->query("SELECT CurrentRegionID from " . C_USERINFO_TBL . " where UserID = '" . $UUID . "'");
+    list($regionUUID) = $DbLink3->next_record();
+    $username = $firstname . " " . $lastname;
+    // Let's get the region information
+    $DbLink3 = new DB;
+    $DbLink3->query("SELECT RegionName from " . C_REGIONS_TBL . " where RegionUUID = '" . $RegionUUID . "'");
+    list($region) = $DbLink3->next_record();
+    if ($region != "") {
+        $NOWONLINE = $NOWONLINE + 1;
+    }
+}
+
+$DbLink->query("SELECT count(*) FROM " . C_USERINFO_TBL . " where LastLogin > UNIX_TIMESTAMP(FROM_UNIXTIME(UNIX_TIMESTAMP(now()) - 2419200))");
+list($LASTMONTHONLINE) = $DbLink->next_record();
+
+$DbLink->query("SELECT count(*) FROM " . C_USERS_TBL . "");
+list($USERCOUNT) = $DbLink->next_record();
+
+$DbLink->query("SELECT count(*) FROM " . C_REGIONS_TBL . "");
+list($REGIONSCOUNT) = $DbLink->next_record();
 ?>-->
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -102,9 +144,10 @@ if ($_POST[Submit] == $webui_admin_login) {
                 
                 </span>
                
-				<!-- <div id="gridstatus" style="position:absolute; right:100px; top:25px; width:auto; height:auto; ">
-				<? //php include("sites/gridstatus.php"); ?></div> -->                        
+                <div style="position:absolute; right:100px; top:25px; width:auto; height:auto; ">
                 
+                        <?php include("sites/gridstatus.php"); ?>
+                </div>
                 <div id="navigation">
                 
                     <? include("sites/menubar.php"); ?>
