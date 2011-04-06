@@ -65,8 +65,9 @@
  
 ?>
 
-<div id="menu">
-    <ul class="menu">
+<!--<div id="menu">-->
+    <ul> <!--class="menu"-->
+    
     <?
 		$DbLink = new DB;
 		if ($_SESSION[USERID])
@@ -88,4 +89,4 @@
 		}
     ?>
     </ul>
-</div>
+<!--</div>-->

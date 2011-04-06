@@ -5,7 +5,7 @@
     <div id="chat">
         <div id="info"><p><? echo $webui_chat_info; ?></p></div>
         <div class="chat">
-            <iframe class="level1" src="http://webchat.freenode.net/?channels=aurora-dev&uio=MTE9MjI2dd" 
+            <iframe class="level1" src="http://webchat.freenode.net/?channels=astragrid&uio=MTE9MjI2dd" 
                     width="100%" 
                     height="400" 
                     border="0" 
